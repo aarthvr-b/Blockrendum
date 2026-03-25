@@ -1,0 +1,51 @@
+name: Seed GitHub Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: GitHub owner that owns the repo and project
+        required: true
+        default: aarthvr-b
+      repo:
+        description: Repository name to seed
+        required: true
+        default: Blockrendum
+      project_title:
+        description: GitHub Project title used when project_number is not provided
+        required: true
+        default: Blockrendum
+      project_number:
+        description: Optional project number to avoid title lookup
+        required: false
+      issues_file:
+        description: Relative path to the TSV backlog file
+        required: true
+        default: docs/github-project-issues.tsv
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      GH_TOKEN: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
+      OWNER: ${{ inputs.owner }}
+      REPO: ${{ inputs.repo }}
+      PROJECT_TITLE: ${{ inputs.project_title }}
+      PROJECT_NUMBER: ${{ inputs.project_number }}
+      ISSUES_FILE: ${{ inputs.issues_file }}
+    steps:
+      - name: Validate token secret
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "Missing PROJECT_AUTOMATION_TOKEN secret." >&2
+            echo "Create a classic PAT with repo and project access, then store it as PROJECT_AUTOMATION_TOKEN." >&2
+            exit 1
+          fi
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Seed labels and issues into the project
+        run: ./scripts/seed_github_project.sh

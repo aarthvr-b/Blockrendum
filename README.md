@@ -158,6 +158,25 @@ This repository is currently focused on design and implementation planning for t
 - seeded demo data
 - educational documentation that explains how the system works
 
+## Project Tracking
+
+The repo now includes a GitHub Project workflow seed so planning stays concrete and small-task oriented.
+
+- Board rules and field definitions live in `docs/github-project-board.md`
+- The initial issue backlog lives in `docs/github-project-issues.tsv`
+- Issue templates for small tasks and decisions live in `.github/ISSUE_TEMPLATE/`
+- A bootstrap script for creating labels, issues, and adding them to the GitHub Project lives in `scripts/seed_github_project.sh`
+- A manual GitHub Actions workflow for running that seed from the repo UI lives in `.github/workflows/seed-project.yml`
+
+The intended workflow is:
+
+1. create or install `gh`
+2. authenticate it against GitHub with repo and project access
+3. either run `scripts/seed_github_project.sh` locally or trigger the `Seed GitHub Project` workflow in Actions
+4. provide `PROJECT_NUMBER` if you want to skip project lookup by title
+
+This keeps the backlog versioned in the repository while still using GitHub Projects as the execution view.
+
 ## Project Positioning
 
 Blockrendum should be presented as:
