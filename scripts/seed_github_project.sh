@@ -62,6 +62,10 @@ add_issue_to_project() {
   local issue_number="$1"
   local project_number="$2"
 
+  if gh project item-list "$project_number" --owner "$OWNER" --format json --jq '.items[]? | select(.content.number == '"$issue_number"' and .content.repository == "'"$OWNER/$REPO"'") | .id' | grep -q .; then
+    return 0
+  fi
+
   gh project item-add "$project_number" --owner "$OWNER" --url "https://github.com/$OWNER/$REPO/issues/$issue_number" >/dev/null
 }
 
@@ -104,7 +108,7 @@ EOF
   ensure_label "type:spike" "f9d0c4"
   ensure_label "blocked" "d73a4a"
 
-  python3 - "$ISSUES_FILE" <<'PY' | while IFS=$'\t' read -r title labels body; do
+  python3 - "$ISSUES_FILE" <<'PY' | while IFS= read -r -d '' title && IFS= read -r -d '' labels && IFS= read -r -d '' body; do
 import csv
 import sys
 
@@ -112,7 +116,12 @@ with open(sys.argv[1], newline="", encoding="utf-8") as fh:
     reader = csv.DictReader(fh, delimiter="\t")
     for row in reader:
         body = row["body"].replace("\\n", "\n")
-        print(f'{row["title"]}\t{row["labels"]}\t{body}')
+        sys.stdout.buffer.write(row["title"].encode("utf-8"))
+        sys.stdout.buffer.write(b"\0")
+        sys.stdout.buffer.write(row["labels"].encode("utf-8"))
+        sys.stdout.buffer.write(b"\0")
+        sys.stdout.buffer.write(body.encode("utf-8"))
+        sys.stdout.buffer.write(b"\0")
 PY
     issue_number="$(ensure_issue "$title" "$labels" "$body")"
     if [[ "$SKIP_PROJECT_ADD" == "1" ]]; then
