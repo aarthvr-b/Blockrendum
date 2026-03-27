@@ -60,12 +60,13 @@ Those omissions are deliberate. A real remote voting system is a much bigger cha
 
 The intended implementation direction for this project is:
 
-- `Go` for the API backend
+- `Python` for the API backend
 - `PostgreSQL` for persistence
-- `go-ethereum` for EVM blockchain interaction
+- `FastAPI` for the HTTP API layer
+- `web3.py` for EVM blockchain interaction
 - An EVM public testnet for receipt anchoring
 
-This is a good fit for a POC because Go keeps the backend compact and fast, PostgreSQL makes relational data easy to reason about, and EVM tooling is mature enough for simple contract interactions.
+This is a good fit for a POC because Python keeps the backend easy to iterate on, FastAPI makes API development and validation straightforward, PostgreSQL keeps the relational model explicit, and EVM tooling in Python is mature enough for simple contract interactions.
 
 ## Architectural Principles
 
@@ -152,7 +153,7 @@ That makes it useful for a demo, but not sufficient for a real public election.
 
 This repository is currently focused on design and implementation planning for the POC. The intended deliverables are:
 
-- a clean backend API in Go
+- a clean backend API in Python
 - a clear data model
 - a small smart contract or event-based receipt anchor
 - seeded demo data
@@ -203,7 +204,7 @@ It should not be presented as:
 
 ## Short Repo Description
 
-Go-based POC for a digital referendum system with simulated SPID/CIE login, anonymous voting, and blockchain-backed audit receipts.
+Python-based POC for a digital referendum system with simulated SPID/CIE login, anonymous voting, and blockchain-backed audit receipts.
 
 ## License
 
